@@ -1,4 +1,4 @@
-package com.gabrielspassos.poc;
+package com.gabrielspassos.poc.account;
 
 import com.intuit.karate.junit5.Karate;
 
