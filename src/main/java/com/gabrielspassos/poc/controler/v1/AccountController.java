@@ -5,6 +5,7 @@ import com.gabrielspassos.poc.controler.v1.request.AccountParamRequest;
 import com.gabrielspassos.poc.controler.v1.request.AccountRequest;
 import com.gabrielspassos.poc.controler.v1.response.AccountPageResponse;
 import com.gabrielspassos.poc.controler.v1.response.AccountResponse;
+import com.gabrielspassos.poc.controler.v1.response.ErrorResponse;
 import com.gabrielspassos.poc.model.builder.AccountBuilder;
 import com.gabrielspassos.poc.model.builder.AccountParamBuilder;
 import com.gabrielspassos.poc.model.dto.AccountDTO;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +31,6 @@ import static com.gabrielspassos.poc.config.PageConfiguration.PAGE;
 import static com.gabrielspassos.poc.config.PageConfiguration.SIZE;
 
 @RestController
-@RequestMapping(value = "/accounts")
 @AllArgsConstructor
 public class AccountController implements BaseVersion {
 
@@ -39,8 +38,11 @@ public class AccountController implements BaseVersion {
     private ObjectMapper objectMapper;
 
     @ApiOperation(value = "Create account")
-    @ApiResponses(@ApiResponse(code = OK, message = OK_MESSAGE, response = AccountResponse.class))
-    @PostMapping
+    @ApiResponses(value = {
+            @ApiResponse(code = OK, message = OK_MESSAGE, response = AccountResponse.class),
+            @ApiResponse(code = BAD_REQUEST, message = BAD_REQUEST_MESSAGE, response = ErrorResponse.class)
+    })
+    @PostMapping(value = "/accounts")
     public ResponseEntity<AccountResponse> createAccount(@RequestBody @Valid AccountRequest accountRequest) {
         AccountDTO accountDTO = AccountBuilder.build(accountRequest);
         AccountDTO savedAccount = accountService.createAccount(accountDTO);
@@ -49,8 +51,11 @@ public class AccountController implements BaseVersion {
     }
 
     @ApiOperation(value = "Get account by id")
-    @ApiResponses(@ApiResponse(code = OK, message = OK_MESSAGE, response = AccountResponse.class))
-    @GetMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(code = OK, message = OK_MESSAGE, response = AccountResponse.class),
+            @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE, response = ErrorResponse.class)
+    })
+    @GetMapping(value = "/accounts/{id}")
     public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
         AccountDTO accountDTO = accountService.getAccountById(id);
         AccountResponse accountResponse = objectMapper.convertValue(accountDTO, AccountResponse.class);
@@ -59,7 +64,7 @@ public class AccountController implements BaseVersion {
 
     @ApiOperation(value = "Get accounts")
     @ApiResponses(@ApiResponse(code = OK, message = OK_MESSAGE, response = AccountPageResponse.class))
-    @GetMapping
+    @GetMapping("/accounts")
     public ResponseEntity<Page<AccountResponse>> getAccounts(AccountParamRequest accountParamRequest,
                                                        @RequestParam(required = false, defaultValue = PAGE) Integer page,
                                                        @RequestParam(required = false, defaultValue = SIZE) Integer size) {

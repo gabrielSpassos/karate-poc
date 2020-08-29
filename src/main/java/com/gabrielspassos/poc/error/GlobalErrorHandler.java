@@ -1,5 +1,6 @@
 package com.gabrielspassos.poc.error;
 
+import com.gabrielspassos.poc.controler.v1.response.ErrorResponse;
 import com.gabrielspassos.poc.exception.BusinessException;
 import com.gabrielspassos.poc.model.dto.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,17 +20,19 @@ public class GlobalErrorHandler {
 
     @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> handleBusinessException(BusinessException businessException) {
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException businessException) {
         log.error("Expected Error", businessException);
+        ErrorResponse errorResponse = buildError(businessException.getError());
+
         return ResponseEntity
                 .status(businessException.getHttpStatus())
-                .body(businessException.getError());
+                .body(errorResponse);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -39,9 +42,20 @@ public class GlobalErrorHandler {
         return buildError("9", errorMessage, e);
     }
 
-    private ErrorDTO buildError(String code, String message, Exception e) {
+    private ErrorResponse buildError(String code, String message, Exception e) {
         log.error("Error code {}, Error Message {}", code, message, e);
-        return new ErrorDTO(code, message);
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setCode(code);
+        errorResponse.setMessage(message);
+        return errorResponse;
+    }
+
+    private ErrorResponse buildError(ErrorDTO errorDTO) {
+        log.error("Error {}", errorDTO);
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setCode(errorDTO.getCode());
+        errorResponse.setMessage(errorDTO.getMessage());
+        return errorResponse;
     }
 
 }
