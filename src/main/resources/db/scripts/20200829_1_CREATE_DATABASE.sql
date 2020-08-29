@@ -1,0 +1,10 @@
+--liquibase formatted sql
+
+--changeset gabrielpassos:1
+CREATE TABLE IF NOT EXISTS ACCOUNT(
+  ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  BANK INT,
+  AGENCY INT,
+  NUMBER INT
+);
+--rollback DROP TABLE LOTTERY_BALANCE;

@@ -1,11 +1,15 @@
 package com.gabrielspassos.poc.service;
 
+import com.gabrielspassos.poc.exception.AccountNotFoundException;
 import com.gabrielspassos.poc.model.builder.AccountBuilder;
 import com.gabrielspassos.poc.model.dto.AccountDTO;
+import com.gabrielspassos.poc.model.dto.AccountParamDTO;
 import com.gabrielspassos.poc.model.entity.AccountEntity;
 import com.gabrielspassos.poc.repository.AccountRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -19,5 +23,16 @@ public class AccountService {
         AccountEntity accountEntity = AccountBuilder.build(accountDTO);
         AccountEntity savedEntity = accountRepository.save(accountEntity);
         return AccountBuilder.build(savedEntity);
+    }
+
+    public AccountDTO getAccountById(Long id) {
+        return accountRepository.findById(id)
+                .map(AccountBuilder::build)
+                .orElseThrow(AccountNotFoundException::new);
+    }
+
+    public Page<AccountDTO> getAccounts(AccountParamDTO accountParamDTO, Pageable page) {
+        return accountRepository.search(accountParamDTO, page)
+                .map(AccountBuilder::build);
     }
 }

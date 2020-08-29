@@ -1,7 +1,9 @@
 package com.gabrielspassos.poc.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.Id;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "ACCOUNT")
 public class AccountEntity {
 

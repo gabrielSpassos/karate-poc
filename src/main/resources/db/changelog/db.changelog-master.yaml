@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/scripts/20200829_1_CREATE_DATABASE.sql
