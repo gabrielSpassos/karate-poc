@@ -13,7 +13,7 @@ This is a POC project to test the use of [Karate Framework](https://github.com/i
 [H2 Console](http://localhost:8080/h2-console)
 
 ```
-JDBC URL: jdbc:h2:mem:dogsdb
+JDBC URL: jdbc:h2:mem:accountsdb
 User Name: sa
 Password: password
 ```
